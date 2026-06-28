@@ -1,0 +1,454 @@
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<Window x:Class="MyFirstMapApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:esri="http://schemas.esri.com/arcgis/runtime/2013"
+        Title="GIS 地图工具"
+        Height="700"
+        Width="1100"
+        WindowStartupLocation="CenterScreen"
+        Background="#F0F2F5">
+
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI, Microsoft YaHei, sans-serif" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="#1E293B" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="FontFamily" Value="Segoe UI, Microsoft YaHei" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Background" Value="#F1F5F9" />
+            <Setter Property="Foreground" Value="#1E293B" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="FontFamily" Value="Segoe UI, Microsoft YaHei" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="#E2E8F0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="8,2" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <Border x:Name="Border" Background="{TemplateBinding Background}" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6" SnapsToDevicePixels="True">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <ContentPresenter x:Name="ContentSite" Grid.Column="0" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" VerticalAlignment="Center" Margin="6,0,0,0" />
+                                    <ToggleButton Grid.Column="1" x:Name="DropDownToggle" Background="Transparent" BorderThickness="0" Focusable="False" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" Width="28" SnapsToDevicePixels="True">
+                                        <ToggleButton.Content>
+                                            <TextBlock Text="&#x25BC;" FontSize="10" Foreground="#94A3B8" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </ToggleButton.Content>
+                                    </ToggleButton>
+                                </Grid>
+                            </Border>
+                            <Popup x:Name="Popup" IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" StaysOpen="False">
+                                <Border Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6" Padding="0" Margin="0,2,0,0" Width="{Binding ActualWidth, ElementName=Border}">
+                                    <ScrollViewer>
+                                        <ItemsPresenter />
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#0078D4" />
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#0078D4" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="FontFamily" Value="Segoe UI, Microsoft YaHei" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Padding" Value="6,4" />
+            <Setter Property="BorderBrush" Value="#CBD5E1" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Foreground" Value="#1E293B" />
+        </Style>
+        <Style TargetType="ListBox">
+            <Setter Property="FontFamily" Value="Segoe UI, Microsoft YaHei" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="#E2E8F0" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style TargetType="Expander">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="#E2E8F0" />
+            <Setter Property="BorderThickness" Value="0,0,0,1" />
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="Foreground" Value="#334155" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Expander">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <ToggleButton Grid.Row="0" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" Focusable="False">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Cursor="Hand">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <ContentPresenter Grid.Column="0" Content="{TemplateBinding Content}" VerticalAlignment="Center" />
+                                                <TextBlock Grid.Column="1" x:Name="Arrow" Text="&#x25B6;" FontSize="14" Foreground="#94A3B8" />
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="Arrow" Property="Text" Value="&#x25BC;" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                                <ContentPresenter Content="{TemplateBinding Header}" />
+                            </ToggleButton>
+                            <Border Grid.Row="1" Background="#FAFBFC" Padding="10,4" x:Name="ContentArea" Visibility="Collapsed">
+                                <ContentPresenter />
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsExpanded" Value="True">
+                                <Setter TargetName="ContentArea" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="#0078D4" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <DataTemplate x:Key="PropertyItemTemplate">
+            <Border x:Name="ItemBorder" BorderBrush="#E8EDF2" BorderThickness="0,0,0,1" Padding="10,6" Background="Transparent">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="{Binding FieldName}" FontWeight="SemiBold" Foreground="#475569" FontSize="12" />
+                    <TextBlock Grid.Column="1" Text="{Binding Value}" Foreground="#1E293B" FontSize="12" TextWrapping="Wrap" />
+                </Grid>
+            </Border>
+            <DataTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="ItemBorder" Property="Background" Value="#F1F5F9" />
+                </Trigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="35" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="280" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <!-- 左侧面板 -->
+        <Border Grid.Row="0" Grid.Column="0" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="0,0,1,0" Padding="0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Background="Transparent">
+                <StackPanel>
+                    <Border Background="#1E293B" Padding="16,12" BorderBrush="#334155" BorderThickness="0,0,0,1">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#x1F5FA;" FontSize="20" Margin="0,0,10,0" />
+                            <TextBlock Text="GIS 地图工具" FontSize="15" FontWeight="SemiBold" Foreground="#F1F5F9" />
+                            <Border Background="#0078D4" CornerRadius="12" Padding="10,2" Margin="12,0,0,0">
+                                <TextBlock Text="&#x1F4E6; V 1.0" FontSize="11" Foreground="White" FontWeight="SemiBold" />
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 图层管理 -->
+                    <Expander Header="图层管理" IsExpanded="True">
+                        <StackPanel>
+                            <ComboBox x:Name="cmbBasemap" Height="30" Margin="0,0,0,8" SelectionChanged="CmbBasemap_SelectionChanged">
+                                <ComboBoxItem Content="街道地图" Tag="Streets" IsSelected="True" />
+                                <ComboBoxItem Content="地形图" Tag="Topographic" />
+                                <ComboBoxItem Content="影像图" Tag="Imagery" />
+                                <ComboBoxItem Content="浅色图" Tag="LightGray" />
+                                <ComboBoxItem Content="深色图" Tag="DarkGray" />
+                                <ComboBoxItem Content="导航图" Tag="Navigation" />
+                            </ComboBox>
+                            <TextBlock Text="已加载图层" FontSize="12" FontWeight="Normal" Foreground="#64748B" Margin="0,8,0,4" />
+                            <ListBox x:Name="lstLayers" Height="120" Background="White" BorderThickness="1" BorderBrush="#E2E8F0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AllowDrop="True" PreviewMouseLeftButtonDown="LstLayers_PreviewMouseLeftButtonDown" PreviewMouseMove="LstLayers_PreviewMouseMove" Drop="LstLayers_Drop" MouseDoubleClick="LstLayers_MouseDoubleClick">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" Padding="4,2">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="{Binding Name}" VerticalAlignment="Center" />
+                                                <Button Grid.Column="1" Width="20" Height="20" Margin="4,0,4,0" Background="{Binding LayerColor}" BorderBrush="#CBD5E1" BorderThickness="1" Cursor="Hand" Click="ColorButton_Click" Tag="{Binding}" />
+                                                <Button Grid.Column="2" Content="&#x2716;" Background="Transparent" BorderThickness="0" Foreground="#999" FontSize="12" Cursor="Hand" Click="RemoveLayer_Click" Tag="{Binding}" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <TextBlock Text="添加图层" FontSize="12" FontWeight="Normal" Foreground="#64748B" Margin="0,8,0,4" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ComboBox Grid.Column="0" x:Name="cmbDataSource" Height="28" Margin="0,0,4,0">
+                                    <ComboBoxItem Content="Shapefile" Tag="Shapefile" IsSelected="True" />
+                                    <ComboBoxItem Content="GeoJSON" Tag="GeoJSON" />
+                                    <ComboBoxItem Content="GeoPackage" Tag="GeoPackage" />
+                                    <ComboBoxItem Content="移动数据库" Tag="MobileGeodatabase" />
+                                    <ComboBoxItem Content="要素服务" Tag="FeatureService" />
+                                    <ComboBoxItem Content="WFS" Tag="WFS" />
+                                    <ComboBoxItem Content="OGC API" Tag="OGCAPI" />
+                                </ComboBox>
+                                <Button Grid.Column="1" Content="添加" Width="50" Height="28" Style="{StaticResource PrimaryButton}" Click="BtnAddLayer_Click" />
+                            </Grid>
+                            <Button Content="清除所有图层" Margin="0,8,0,0" Height="28" Background="#F1F5F9" Foreground="#334155" BorderBrush="#CBD5E1" BorderThickness="1" Click="btnClearLayers_Click" />
+                        </StackPanel>
+                    </Expander>
+
+                    <!-- Web Map -->
+                    <Expander Header="Web Map">
+                        <StackPanel>
+                            <TextBox x:Name="txtWebMapUrl" Height="30" Margin="0,2">
+                                <TextBox.ToolTip>
+                                    <ToolTip>输入 Web Map URL 或 Item ID</ToolTip>
+                                </TextBox.ToolTip>
+                            </TextBox>
+                            <Button Content="加载 Web Map" Height="30" Margin="0,2" Style="{StaticResource PrimaryButton}" Click="LoadWebMap_Click" />
+                        </StackPanel>
+                    </Expander>
+
+                    <!-- 绘制工具 -->
+                    <Expander Header="绘制工具">
+                        <StackPanel>
+                            <Button Content="添加点" Height="30" Margin="0,2" Click="AddPoint_Click" />
+                            <Button Content="绘制线" Height="30" Margin="0,2" Click="DrawLine_Click" />
+                            <Button Content="绘制面" Height="30" Margin="0,2" Click="DrawPolygon_Click" />
+                            <Button Content="距离测量" Height="30" Margin="0,2" Click="MeasureDistance_Click" />
+                            <Button Content="面积测量" Height="30" Margin="0,2" Click="MeasureArea_Click" />
+                            <Separator Margin="0,5"/>
+                            <Button Content="完成绘制" Height="30" Margin="0,2" Click="CompleteDrawing_Click" />
+                            <Button Content="取消绘制" Height="30" Margin="0,2" Click="CancelDrawing_Click" />
+                            <Separator Margin="0,5"/>
+                            <Button Content="导出GeoJSON" Height="30" Margin="0,2" Click="ExportShapefile_Click" />
+                            <Button Content="清除图形" Height="30" Margin="0,2" Click="ClearGraphics_Click" />
+                        </StackPanel>
+                    </Expander>
+
+                    <!-- 视图控制 -->
+                    <Expander Header="视图控制">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button Content="+" Width="50" Height="30" Margin="2" Click="ZoomIn_Click" ToolTip="放大" />
+                            <Button Content="-" Width="50" Height="30" Margin="2" Click="ZoomOut_Click" ToolTip="缩小" />
+                            <Button Content="&#x1F5FA;" Width="50" Height="30" Margin="2" Click="ZoomToFullExtent_Click" ToolTip="全图" />
+                            <Button Content="&#x21BB;" Width="50" Height="30" Margin="2" Click="RefreshMap_Click" ToolTip="刷新" />
+                        </StackPanel>
+                    </Expander>
+
+                    <!-- 搜索定位 -->
+                    <Expander Header="搜索定位">
+                        <StackPanel>
+                            <TextBox x:Name="txtSearchAddress" Height="30" Margin="0,2" Text="输入地址..." />
+                            <Button Content="搜索地址" Height="30" Margin="0,2" Style="{StaticResource PrimaryButton}" Click="SearchAddress_Click" />
+                            <Button Content="快速定位" Height="30" Margin="0,2" Click="QuickLocate_Click" />
+                            <Button Content="路径规划" Height="30" Margin="0,2" Click="RoutePlanning_Click" />
+                        </StackPanel>
+                    </Expander>
+
+                    <!-- 3D功能 -->
+                    <Expander Header="3D功能">
+                        <StackPanel>
+                            <ToggleButton x:Name="btnToggle3D" Content="切换到 3D 场景" Height="30" Margin="0,2" Background="#F1F5F9" BorderThickness="0" Click="Toggle3D_Click" />
+                            <Separator Margin="0,5"/>
+                            <TextBlock Text="Web Scene" FontWeight="SemiBold" Margin="0,5,0,2" />
+                            <TextBox x:Name="txtWebSceneUrl" Height="30" Margin="0,2" />
+                            <Button x:Name="btnLoadWebScene" Content="加载 Web Scene" Height="30" Margin="0,2" Click="LoadWebScene_Click" />
+                            <Separator Margin="0,5"/>
+                            <TextBlock Text="3D 底图" FontWeight="SemiBold" Margin="0,5,0,2" />
+                            <ComboBox x:Name="cbo3DBasemap" Height="30" Margin="0,2" SelectionChanged="cbo3DBasemap_SelectionChanged">
+                                <ComboBoxItem Content="影像+地形" Tag="TerrainWithImagery" IsSelected="True" />
+                                <ComboBoxItem Content="街道+地形" Tag="TerrainWithStreets" />
+                                <ComboBoxItem Content="暗色+地形" Tag="TerrainWithDark" />
+                                <ComboBoxItem Content="仅地形" Tag="TerrainOnly" />
+                            </ComboBox>
+                            <Separator Margin="0,5"/>
+                            <TextBlock Text="视角控制" FontWeight="SemiBold" Margin="0,5,0,2" />
+                            <Grid Margin="0,2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" Content="俯视" Height="28" Margin="0,0,2,0" Click="TopView_Click" />
+                                <Button Grid.Column="1" Content="倾斜" Height="28" Margin="2,0,0,0" Click="TiltView_Click" />
+                            </Grid>
+                            <Grid Margin="0,2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" Content="重置" Height="28" Margin="0,0,2,0" Click="Reset3DView_Click" />
+                                <Button Grid.Column="1" Content="旋转" Height="28" Margin="2,0,0,0" Click="Rotate3D_Click" />
+                            </Grid>
+                        </StackPanel>
+                    </Expander>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- 地图 -->
+        <esri:MapView x:Name="MyMapView" Grid.Row="0" Grid.Column="1" GeoViewTapped="MyMapView_GeoViewTapped" GeoViewDoubleTapped="MyMapView_GeoViewDoubleTapped">
+            <esri:MapView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="输入坐标添加点" Click="InputCoordinate_Click" />
+                    <MenuItem Header="输入坐标绘制线" Click="InputCoordinateForLine_Click" />
+                    <MenuItem Header="输入坐标绘制面" Click="InputCoordinateForPolygon_Click" />
+                    <Separator />
+                    <MenuItem Header="完成绘制" Click="CompleteDrawing_Click" />
+                    <MenuItem Header="取消绘制" Click="CancelDrawing_Click" />
+                </ContextMenu>
+            </esri:MapView.ContextMenu>
+        </esri:MapView>
+
+        <!-- 3D场景 -->
+        <esri:SceneView x:Name="MySceneView" Grid.Row="0" Grid.Column="1" Visibility="Collapsed" GeoViewTapped="MySceneView_GeoViewTapped" GeoViewDoubleTapped="MySceneView_GeoViewDoubleTapped">
+            <esri:SceneView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="重置视角" Click="Reset3DView_Click" />
+                    <MenuItem Header="添加3D点" Click="Add3DPoint_Click" />
+                </ContextMenu>
+            </esri:SceneView.ContextMenu>
+        </esri:SceneView>
+
+        <!-- 路径规划面板 -->
+        <Border x:Name="RoutePanel" Grid.Row="0" Grid.Column="1" Width="350" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10" Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" Visibility="Collapsed">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" ShadowDepth="3" Opacity="0.15" Direction="-90" />
+            </Border.Effect>
+            <StackPanel>
+                <Border Background="#1E293B" Padding="12,10" CornerRadius="8,8,0,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="路径规划" FontWeight="SemiBold" FontSize="14" Foreground="White" />
+                        <Button Grid.Column="1" Content="&#x2716;" Background="Transparent" BorderThickness="0" Foreground="#94A3B8" FontSize="14" Cursor="Hand" Click="CloseRoutePanel_Click" />
+                    </Grid>
+                </Border>
+                <StackPanel Margin="12,10">
+                    <TextBlock Text="路线服务" FontSize="12" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,4" />
+                    <ComboBox x:Name="cmbRouteService" Height="30" Margin="0,0,0,8">
+                        <ComboBoxItem Content="ArcGIS Online" Tag="ArcGIS" IsSelected="True" />
+                        <ComboBoxItem Content="天地图" Tag="Tianditu" />
+                    </ComboBox>
+                    <TextBlock Text="起点" FontSize="12" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,4" />
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" x:Name="txtRouteStart" Height="30" />
+                        <Button Grid.Column="1" Content="&#x1F4CD;" Width="30" Height="30" Margin="4,0,0,0" Click="PickStartPoint_Click" ToolTip="在地图上选择起点" />
+                    </Grid>
+                    <TextBlock Text="终点" FontSize="12" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,4" />
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" x:Name="txtRouteEnd" Height="30" />
+                        <Button Grid.Column="1" Content="&#x1F3C1;" Width="30" Height="30" Margin="4,0,0,0" Click="PickEndPoint_Click" ToolTip="在地图上选择终点" />
+                    </Grid>
+                    <TextBlock Text="出行方式" FontSize="12" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,4" />
+                    <ComboBox x:Name="cmbTravelMode" Height="30" Margin="0,0,0,10">
+                        <ComboBoxItem Content="驾车" Tag="Driving" IsSelected="True" />
+                        <ComboBoxItem Content="步行" Tag="Walking" />
+                    </ComboBox>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Content="计算路线" Width="100" Height="32" Style="{StaticResource PrimaryButton}" Click="CalculateRoute_Click" />
+                        <Button Content="清除" Width="60" Height="32" Margin="8,0,0,0" Background="#F1F5F9" Click="ClearRoute_Click" />
+                    </StackPanel>
+                </StackPanel>
+                <Border x:Name="RouteResultPanel" Background="#F8FAFC" Padding="12,10" CornerRadius="0,0,8,8" Visibility="Collapsed">
+                    <StackPanel>
+                        <TextBlock Text="路线结果" FontSize="12" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,6" />
+                        <TextBlock x:Name="txtRouteDistance" FontSize="13" Foreground="#1E293B" Margin="0,2" />
+                        <TextBlock x:Name="txtRouteDuration" FontSize="13" Foreground="#1E293B" Margin="0,2" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Border>
+
+        <!-- 属性面板 -->
+        <Border x:Name="PropertyPanel" Grid.Row="0" Grid.Column="2" Width="320" Background="White" BorderBrush="#E2E8F0" BorderThickness="1,0,0,0" Visibility="Collapsed">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.1" Direction="-90" />
+            </Border.Effect>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Border Grid.Row="0" Background="#1E293B" Padding="12,10">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="属性查看" FontWeight="SemiBold" FontSize="14" Foreground="White" />
+                        <Button Grid.Column="1" Content="&#x2716;" Background="Transparent" BorderThickness="0" Foreground="#94A3B8" FontSize="16" Cursor="Hand" Click="ClosePropertyPanel_Click" />
+                    </Grid>
+                </Border>
+                <Border Grid.Row="1" Background="#F8FAFC" Padding="12,6" BorderBrush="#E8EDF2" BorderThickness="0,0,0,1">
+                    <TextBlock x:Name="txtLayerName" FontSize="12" Foreground="#64748B" />
+                </Border>
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,35,0,0">
+                    <ItemsControl x:Name="PropertyItems" ItemTemplate="{StaticResource PropertyItemTemplate}" Background="Transparent" />
+                </ScrollViewer>
+                <Border Grid.Row="2" Background="#F8FAFC" Padding="8" BorderBrush="#E8EDF2" BorderThickness="0,1,0,0">
+                    <TextBlock x:Name="txtPropertyCount" FontSize="11" Foreground="#94A3B8" HorizontalAlignment="Center" />
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- 状态栏 -->
+        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Background="#1E293B">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,0">
+                <TextBlock x:Name="txtStatus" FontSize="12" Foreground="#94A3B8" Text="就绪" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

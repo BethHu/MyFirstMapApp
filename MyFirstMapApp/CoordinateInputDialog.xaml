@@ -1,0 +1,54 @@
+﻿<Window x:Class="MyFirstMapApp.CoordinateInputDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="输入坐标"
+        Height="220"
+        Width="420"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="输入坐标值:" FontWeight="Bold" Margin="0,0,0,10" />
+
+        <!-- 纬度 -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="80" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="纬度:" VerticalAlignment="Center" />
+            <TextBox Grid.Column="1" x:Name="txtLatitude" Height="30" VerticalContentAlignment="Center" Margin="5,0" />
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="5,0">
+                <RadioButton x:Name="rbNorth" Content="N" GroupName="LatHemisphere" IsChecked="True" Margin="0,0,8,0" />
+                <RadioButton x:Name="rbSouth" Content="S" GroupName="LatHemisphere" />
+            </StackPanel>
+        </Grid>
+
+        <!-- 经度 -->
+        <Grid Grid.Row="2" Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="80" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="经度:" VerticalAlignment="Center" />
+            <TextBox Grid.Column="1" x:Name="txtLongitude" Height="30" VerticalContentAlignment="Center" Margin="5,0" />
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="5,0">
+                <RadioButton x:Name="rbEast" Content="E" GroupName="LonHemisphere" IsChecked="True" Margin="0,0,8,0" />
+                <RadioButton x:Name="rbWest" Content="W" GroupName="LonHemisphere" />
+            </StackPanel>
+        </Grid>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+            <Button Content="确定" Width="80" Height="30" Margin="5,0" Click="BtnOK_Click" IsDefault="True" />
+            <Button Content="取消" Width="80" Height="30" Margin="5,0" Click="BtnCancel_Click" IsCancel="True" />
+        </StackPanel>
+    </Grid>
+</Window>

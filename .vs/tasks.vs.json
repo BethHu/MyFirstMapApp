@@ -1,0 +1,15 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "任务-InputDialog.xaml",
+      "appliesTo": "MyFirstMapApp/InputDialog.xaml.cs",
+      "type": "launch"
+    },
+    {
+      "taskLabel": "任务-MyFirstMapApp",
+      "appliesTo": "/",
+      "type": "launch"
+    }
+  ]
+}

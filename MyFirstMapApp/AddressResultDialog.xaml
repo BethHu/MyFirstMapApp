@@ -1,0 +1,33 @@
+﻿<Window x:Class="MyFirstMapApp.AddressResultDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="地址查询结果" Height="400" Width="500"
+        WindowStartupLocation="CenterOwner">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="60" />
+        </Grid.RowDefinitions>
+
+        <!-- 结果列表 -->
+        <ListBox x:Name="lstResults" Grid.Row="0" Margin="10" 
+                 SelectionChanged="LstResults_SelectionChanged">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="5">
+                        <TextBlock Text="{Binding Label}" FontSize="14" FontWeight="Bold" />
+                        <TextBlock Text="{Binding Score, StringFormat=匹配度: {0}%}" FontSize="12" 
+                                   Foreground="Gray" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- 按钮 -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
+            <Button Content="确定" Width="80" Height="30" Margin="5" 
+                    Click="BtnOK_Click" IsEnabled="False" x:Name="btnOK" />
+            <Button Content="取消" Width="80" Height="30" Margin="5" Click="BtnCancel_Click" />
+        </StackPanel>
+    </Grid>
+</Window>
