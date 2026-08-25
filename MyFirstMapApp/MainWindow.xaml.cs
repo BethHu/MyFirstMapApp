@@ -315,7 +315,11 @@ namespace MyFirstMapApp
 
         private void AddPointToDrawing(double x, double y)
         {
+            if (MyMapView?.SpatialReference == null) return;
             var mapPoint = new MapPoint(x, y, SpatialReferences.Wgs84);
+            if (!MyMapView.SpatialReference.IsEqual(SpatialReferences.Wgs84))
+                mapPoint = GeometryEngine.Project(mapPoint, MyMapView.SpatialReference) as MapPoint;
+            if (mapPoint == null) return;
             _collectedPoints.Add(mapPoint);
             var markerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbolStyle.Circle, _isMeasuring ? System.Drawing.Color.Red : System.Drawing.Color.Blue, 8);
             var markerGraphic = new Graphic(mapPoint, markerSymbol);
@@ -421,7 +425,7 @@ namespace MyFirstMapApp
         }
 
         private void RemoveLayer_Click(object sender, RoutedEventArgs e)
-        { var button = sender as Button; if (button?.Tag is LayerItem item) { MyMapView.Map.OperationalLayers.Remove(item.Layer); _layerItems.Remove(item); } }
+        { var button = sender as Button; if (button?.Tag is LayerItem item) Dispatcher.BeginInvoke((Action)(() => RemoveLayerCore(item))); }
 
         private void ColorButton_Click(object sender, RoutedEventArgs e)
         {
@@ -633,8 +637,96 @@ namespace MyFirstMapApp
             else if (geoType == GeometryType.Polygon) { var fillColor = System.Drawing.Color.FromArgb(150, color.R, color.G, color.B); table.Renderer = new SimpleRenderer(new SimpleFillSymbol { Color = fillColor, Outline = new SimpleLineSymbol { Color = System.Drawing.Color.Black, Width = 1 } }); }
         }
 
+        private void ApplyRendererToLayer(Layer layer, LayerStyleSettings settings)
+        {
+            try
+            {
+                if (layer is FeatureLayer featureLayer && featureLayer.FeatureTable != null) ApplyRendererToFeatureLayer(featureLayer, settings);
+                else if (layer is FeatureCollectionLayer fcLayer && fcLayer.FeatureCollection?.Tables.Count > 0)
+                { foreach (var t in fcLayer.FeatureCollection.Tables) { var fcTable = t as FeatureCollectionTable; if (fcTable != null) ApplyRendererToFeatureCollectionTable(fcTable, settings); } }
+            }
+            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"应用样式错误: {ex.Message}"); }
+        }
+
+        private void ApplyRendererToFeatureLayer(FeatureLayer layer, LayerStyleSettings settings)
+        {
+            var geoType = layer.FeatureTable.GeometryType;
+            if (geoType == GeometryType.Point || geoType == GeometryType.Multipoint)
+            {
+                var outline = settings.MarkerOutlineWidth > 0
+                    ? new SimpleLineSymbol(settings.OutlineLineStyle, settings.MarkerOutlineColor, settings.MarkerOutlineWidth)
+                    : null;
+                layer.Renderer = new SimpleRenderer(new SimpleMarkerSymbol(settings.MarkerStyle, settings.MarkerColor, settings.MarkerSize) { Outline = outline });
+            }
+            else if (geoType == GeometryType.Polyline)
+                layer.Renderer = new SimpleRenderer(new SimpleLineSymbol(settings.LineStyle, settings.LineColor, settings.LineWidth));
+            else if (geoType == GeometryType.Polygon)
+                layer.Renderer = new SimpleRenderer(new SimpleFillSymbol(settings.FillStyle, settings.FillColor, new SimpleLineSymbol(settings.OutlineLineStyle, settings.OutlineColor, settings.OutlineWidth)));
+        }
+
+        private void ApplyRendererToFeatureCollectionTable(FeatureCollectionTable table, LayerStyleSettings settings)
+        {
+            var geoType = table.GeometryType;
+            if (geoType == GeometryType.Point || geoType == GeometryType.Multipoint)
+            {
+                var outline = settings.MarkerOutlineWidth > 0
+                    ? new SimpleLineSymbol(settings.OutlineLineStyle, settings.MarkerOutlineColor, settings.MarkerOutlineWidth)
+                    : null;
+                table.Renderer = new SimpleRenderer(new SimpleMarkerSymbol(settings.MarkerStyle, settings.MarkerColor, settings.MarkerSize) { Outline = outline });
+            }
+            else if (geoType == GeometryType.Polyline)
+                table.Renderer = new SimpleRenderer(new SimpleLineSymbol(settings.LineStyle, settings.LineColor, settings.LineWidth));
+            else if (geoType == GeometryType.Polygon)
+                table.Renderer = new SimpleRenderer(new SimpleFillSymbol(settings.FillStyle, settings.FillColor, new SimpleLineSymbol(settings.OutlineLineStyle, settings.OutlineColor, settings.OutlineWidth)));
+        }
+
         private System.Drawing.Color GetRandomColor()
         { var random = new Random(); return System.Drawing.Color.FromArgb(255, random.Next(50, 230), random.Next(50, 230), random.Next(50, 230)); }
+
+        private GeometryType? GetLayerGeometryType(LayerItem item)
+        {
+            try
+            {
+                if (item.Layer is FeatureLayer fl && fl.FeatureTable != null) return fl.FeatureTable.GeometryType;
+                if (item.Layer is FeatureCollectionLayer fcLayer && fcLayer.FeatureCollection?.Tables.Count > 0)
+                { if (fcLayer.FeatureCollection.Tables[0] is FeatureCollectionTable fcTable) return fcTable.GeometryType; }
+            }
+            catch { }
+            return null;
+        }
+
+        private LayerStyleSettings GetCurrentStyleSettings(LayerItem item, GeometryType geoType)
+        {
+            var settings = new LayerStyleSettings();
+            settings.MarkerColor = item.LayerColor;
+            settings.LineColor = item.LayerColor;
+            settings.FillColor = System.Drawing.Color.FromArgb(150, item.LayerColor.R, item.LayerColor.G, item.LayerColor.B);
+            try
+            {
+                var renderer = (item.Layer as FeatureLayer)?.Renderer as SimpleRenderer;
+                if (renderer == null && item.Layer is FeatureCollectionLayer fcLayer && fcLayer.FeatureCollection?.Tables.Count > 0)
+                { renderer = fcLayer.FeatureCollection.Tables[0]?.Renderer as SimpleRenderer; }
+                if (renderer != null)
+                {
+                    if (renderer.Symbol is SimpleMarkerSymbol ms)
+                    {
+                        settings.MarkerColor = ms.Color;
+                        settings.MarkerSize = ms.Size;
+                        settings.MarkerStyle = ms.Style;
+                        if (ms.Outline != null) { settings.MarkerOutlineColor = ms.Outline.Color; settings.MarkerOutlineWidth = ms.Outline.Width; var sls = ms.Outline as SimpleLineSymbol; if (sls != null) settings.OutlineLineStyle = sls.Style; }
+                    }
+                    else if (renderer.Symbol is SimpleLineSymbol ls)
+                    { settings.LineColor = ls.Color; settings.LineWidth = ls.Width; settings.LineStyle = ls.Style; }
+                    else if (renderer.Symbol is SimpleFillSymbol fs)
+                    {
+                        settings.FillColor = fs.Color; settings.FillStyle = fs.Style;
+                        if (fs.Outline != null) { settings.OutlineColor = fs.Outline.Color; settings.OutlineWidth = fs.Outline.Width; var sls = fs.Outline as SimpleLineSymbol; if (sls != null) settings.OutlineLineStyle = sls.Style; }
+                    }
+                }
+            }
+            catch { }
+            return settings;
+        }
 
         // ==================== 创建FeatureLayer ====================
         private async Task<Layer> CreateFeatureLayerFromSource(string sourceType)
@@ -927,6 +1019,99 @@ namespace MyFirstMapApp
                 await MyMapView.SetViewpointGeometryAsync(extent, 50);
             }
             catch (Exception ex) { MessageBox.Show($"缩放到图层失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error); }
+        }
+
+        // ==================== 右键菜单处理 ====================
+        private void LstLayers_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            var listBox = sender as ListBox;
+            if (listBox == null) return;
+            var mousePos = Mouse.GetPosition(listBox);
+            var hitTestResult = VisualTreeHelper.HitTest(listBox, mousePos);
+            if (hitTestResult == null) { e.Handled = true; return; }
+            DependencyObject current = hitTestResult.VisualHit;
+            while (current != null && !(current is ListBoxItem))
+                current = VisualTreeHelper.GetParent(current);
+            var item = (current as ListBoxItem)?.DataContext as LayerItem;
+            if (item?.Layer == null) { e.Handled = true; return; }
+
+            var ctxMenu = new ContextMenu();
+            var captured = item;
+            ctxMenu.Items.Add(CreateMenuItem("样式设置", () => OpenLayerStyle(captured)));
+            ctxMenu.Items.Add(new Separator());
+            ctxMenu.Items.Add(CreateMenuItem("缩放到图层", () => ZoomToLayerItem(captured)));
+            ctxMenu.Items.Add(CreateMenuItem("删除图层", () => RemoveLayerItem(captured)));
+            listBox.ContextMenu = ctxMenu;
+        }
+
+        private MenuItem CreateMenuItem(string header, Action action)
+        {
+            var mi = new MenuItem { Header = header };
+            mi.Click += (s, a) => action();
+            return mi;
+        }
+
+        private void OpenLayerStyle(LayerItem item)
+        {
+            if (item?.Layer == null) return;
+            var geoType = GetLayerGeometryType(item);
+            if (geoType == null) { MessageBox.Show("无法确定图层几何类型", "提示", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
+            if (geoType.Value != GeometryType.Point && geoType.Value != GeometryType.Multipoint &&
+                geoType.Value != GeometryType.Polyline && geoType.Value != GeometryType.Polygon)
+            { MessageBox.Show("不支持该图层的几何类型", "提示", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
+            try
+            {
+                var currentSettings = GetCurrentStyleSettings(item, geoType.Value);
+                var dialog = new LayerStyleDialog(item.Name, geoType.Value, currentSettings);
+                dialog.Owner = this;
+                if (dialog.ShowDialog() == true)
+                {
+                    item.LayerColor = dialog.Settings.MarkerColor;
+                    ApplyRendererToLayer(item.Layer, dialog.Settings);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"样式设置失败: {ex.Message}\n\n{ex.StackTrace}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private async void ZoomToLayerItem(LayerItem item)
+        {
+            if (item?.Layer == null) return;
+            try
+            {
+                var layer = item.Layer;
+                if (layer.LoadStatus != Esri.ArcGISRuntime.LoadStatus.Loaded) await layer.LoadAsync();
+                Esri.ArcGISRuntime.Geometry.Geometry extent = null;
+                if (layer.FullExtent != null && !layer.FullExtent.IsEmpty) extent = layer.FullExtent;
+                else if (layer is FeatureLayer fl && fl.FeatureTable != null)
+                { if (fl.FeatureTable.LoadStatus != Esri.ArcGISRuntime.LoadStatus.Loaded) await fl.FeatureTable.LoadAsync(); extent = fl.FeatureTable.Extent; }
+                else if (layer is FeatureCollectionLayer fcLayer && fcLayer.FeatureCollection?.Tables.Count > 0)
+                { var table = fcLayer.FeatureCollection.Tables[0]; if (table.LoadStatus != Esri.ArcGISRuntime.LoadStatus.Loaded) await table.LoadAsync(); extent = table.Extent; }
+                if (extent == null || extent.IsEmpty) { MessageBox.Show("该图层没有有效范围", "提示", MessageBoxButton.OK, MessageBoxImage.Information); return; }
+                await MyMapView.SetViewpointGeometryAsync(extent, 50);
+            }
+            catch (Exception ex) { MessageBox.Show($"缩放到图层失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error); }
+        }
+
+        private void RemoveLayerItem(LayerItem item)
+        {
+            var captured = item;
+            Dispatcher.BeginInvoke((Action)(() => RemoveLayerCore(captured)));
+        }
+
+        private void RemoveLayerCore(LayerItem item)
+        {
+            try
+            {
+                if (item == null) return;
+                MyMapView.Map.OperationalLayers.Remove(item.Layer);
+                lstLayers.ItemsSource = null;
+                _layerItems.Remove(item);
+                lstLayers.ItemsSource = _layerItems;
+            }
+            catch (ArgumentOutOfRangeException) { }
         }
 
         // ==================== 辅助输入 ====================

@@ -1,0 +1,201 @@
+<Window x:Class="MyFirstMapApp.LayerStyleDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="图层样式设置" Height="540" Width="460" 
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+
+    <Grid Background="#FFFFFF">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="#1E293B" Padding="15,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="图层样式设置" FontSize="16" Foreground="White" FontWeight="SemiBold" />
+                <TextBlock Grid.Column="1" x:Name="txtGeoType" FontSize="12" Foreground="#94A3B8" VerticalAlignment="Center" />
+            </Grid>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="15,10,15,0">
+            <StackPanel>
+                <TextBlock x:Name="txtLayerName" FontSize="13" Foreground="#475569" Margin="0,0,0,10" FontWeight="SemiBold" />
+
+                <!-- ========== 点样式 ========== -->
+                <StackPanel x:Name="pointSection" Visibility="Collapsed">
+                    <Border Background="#F8FAFC" Padding="12" CornerRadius="6" BorderBrush="#E2E8F0" BorderThickness="1">
+                        <StackPanel>
+                            <TextBlock Text="点符号样式" FontSize="14" FontWeight="SemiBold" Foreground="#1E293B" Margin="0,0,0,10" />
+
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="符号样式" VerticalAlignment="Center" Foreground="#475569" />
+                                <ComboBox Grid.Column="1" x:Name="cmbMarkerStyle" SelectedIndex="0" Height="28" />
+                            </Grid>
+
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="40" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="大小" VerticalAlignment="Center" Foreground="#475569" />
+                                <Slider Grid.Column="1" x:Name="sldMarkerSize" Minimum="4" Maximum="60" Value="10" TickFrequency="1" ValueChanged="Sld_ValueChanged" />
+                                <TextBlock Grid.Column="2" x:Name="txtMarkerSize" Text="10" TextAlignment="Center" VerticalAlignment="Center" Foreground="#1E293B" />
+                            </Grid>
+
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="60" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="颜色" VerticalAlignment="Center" Foreground="#475569" />
+                                <Border Grid.Column="1" x:Name="colorMarker" Width="24" Height="24" Background="Red" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="4" Cursor="Hand" MouseDown="ColorSwatch_Click" Tag="marker" />
+                                <Button Grid.Column="2" Content="选择..." Margin="4,0,0,0" Height="24" FontSize="11" Click="ColorPicker_Click" Tag="marker" />
+                            </Grid>
+
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="60" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="轮廓颜色" VerticalAlignment="Center" Foreground="#475569" />
+                                <Border Grid.Column="1" x:Name="colorMarkerOutline" Width="24" Height="24" Background="Black" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="4" Cursor="Hand" MouseDown="ColorSwatch_Click" Tag="markerOutline" />
+                                <Button Grid.Column="2" Content="选择..." Margin="4,0,0,0" Height="24" FontSize="11" Click="ColorPicker_Click" Tag="markerOutline" />
+                            </Grid>
+
+                            <Grid Margin="0,0,0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="40" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="轮廓宽度" VerticalAlignment="Center" Foreground="#475569" />
+                                <Slider Grid.Column="1" x:Name="sldMarkerOutlineWidth" Minimum="0" Maximum="6" Value="1" TickFrequency="0.5" ValueChanged="Sld_ValueChanged" />
+                                <TextBlock Grid.Column="2" x:Name="txtMarkerOutlineWidth" Text="1" TextAlignment="Center" VerticalAlignment="Center" Foreground="#1E293B" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- ========== 线样式 ========== -->
+                <StackPanel x:Name="lineSection" Visibility="Collapsed">
+                    <Border Background="#F8FAFC" Padding="12" CornerRadius="6" BorderBrush="#E2E8F0" BorderThickness="1">
+                        <StackPanel>
+                            <TextBlock Text="线符号样式" FontSize="14" FontWeight="SemiBold" Foreground="#1E293B" Margin="0,0,0,10" />
+
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="线样式" VerticalAlignment="Center" Foreground="#475569" />
+                                <ComboBox Grid.Column="1" x:Name="cmbLineStyle" SelectedIndex="0" Height="28" />
+                            </Grid>
+
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="40" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="宽度" VerticalAlignment="Center" Foreground="#475569" />
+                                <Slider Grid.Column="1" x:Name="sldLineWidth" Minimum="1" Maximum="12" Value="2" TickFrequency="0.5" ValueChanged="Sld_ValueChanged" />
+                                <TextBlock Grid.Column="2" x:Name="txtLineWidth" Text="2" TextAlignment="Center" VerticalAlignment="Center" Foreground="#1E293B" />
+                            </Grid>
+
+                            <Grid Margin="0,0,0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="60" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="颜色" VerticalAlignment="Center" Foreground="#475569" />
+                                <Border Grid.Column="1" x:Name="colorLine" Width="24" Height="24" Background="Blue" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="4" Cursor="Hand" MouseDown="ColorSwatch_Click" Tag="line" />
+                                <Button Grid.Column="2" Content="选择..." Margin="4,0,0,0" Height="24" FontSize="11" Click="ColorPicker_Click" Tag="line" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- ========== 面样式 ========== -->
+                <StackPanel x:Name="polygonSection" Visibility="Collapsed">
+                    <Border Background="#F8FAFC" Padding="12" CornerRadius="6" BorderBrush="#E2E8F0" BorderThickness="1">
+                        <StackPanel>
+                            <TextBlock Text="面符号样式" FontSize="14" FontWeight="SemiBold" Foreground="#1E293B" Margin="0,0,0,10" />
+
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="填充样式" VerticalAlignment="Center" Foreground="#475569" />
+                                <ComboBox Grid.Column="1" x:Name="cmbFillStyle" SelectedIndex="0" Height="28" />
+                            </Grid>
+
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="60" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="填充颜色" VerticalAlignment="Center" Foreground="#475569" />
+                                <Border Grid.Column="1" x:Name="colorFill" Width="24" Height="24" Background="Blue" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="4" Cursor="Hand" MouseDown="ColorSwatch_Click" Tag="fill" />
+                                <Button Grid.Column="2" Content="选择..." Margin="4,0,0,0" Height="24" FontSize="11" Click="ColorPicker_Click" Tag="fill" />
+                            </Grid>
+
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="轮廓样式" VerticalAlignment="Center" Foreground="#475569" />
+                                <ComboBox Grid.Column="1" x:Name="cmbOutlineStyle" SelectedIndex="0" Height="28" />
+                            </Grid>
+
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="40" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="轮廓宽度" VerticalAlignment="Center" Foreground="#475569" />
+                                <Slider Grid.Column="1" x:Name="sldOutlineWidth" Minimum="0" Maximum="6" Value="1" TickFrequency="0.5" ValueChanged="Sld_ValueChanged" />
+                                <TextBlock Grid.Column="2" x:Name="txtOutlineWidth" Text="1" TextAlignment="Center" VerticalAlignment="Center" Foreground="#1E293B" />
+                            </Grid>
+
+                            <Grid Margin="0,0,0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="60" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="轮廓颜色" VerticalAlignment="Center" Foreground="#475569" />
+                                <Border Grid.Column="1" x:Name="colorOutline" Width="24" Height="24" Background="Black" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="4" Cursor="Hand" MouseDown="ColorSwatch_Click" Tag="outline" />
+                                <Button Grid.Column="2" Content="选择..." Margin="4,0,0,0" Height="24" FontSize="11" Click="ColorPicker_Click" Tag="outline" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Border Grid.Row="2" Background="#F5F5F5" Padding="15" BorderBrush="#E0E0E0" BorderThickness="0,1,0,0" Margin="0,10,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="取消" Width="80" Height="32" Margin="0,0,10,0" Background="#FFFFFF" BorderBrush="#CCCCCC" BorderThickness="1" Click="BtnCancel_Click" Cursor="Hand" />
+                <Button Content="确定" Width="80" Height="32" Background="#1E293B" Foreground="White" BorderThickness="0" Click="BtnOK_Click" Cursor="Hand" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

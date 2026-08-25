@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-D:\vs2019_project\MyFirstMapApp\MyFirstMapApp\obj\Debug\
+E:\064231-胡缘煦-GIS开发代码\实习三\MyFirstMapApp\MyFirstMapApp\obj\Debug\
 MyFirstMapApp
 none
 false
 DEBUG;TRACE
-D:\vs2019_project\MyFirstMapApp\MyFirstMapApp\App.xaml
-7167851972
-150-1373684685
-11-1446550583
-20695546315
-MainWindow.xaml;InputDialog.xaml;ColorPickerDialog.xaml;SelectionDialog.xaml;CoordinateInputDialog.xaml;AddressResultDialog.xaml;QuickLocateDialog.xaml;
+E:\064231-胡缘煦-GIS开发代码\实习三\MyFirstMapApp\MyFirstMapApp\App.xaml
+81043007520
+4-1916680744
+131379477066
+201039988367
+MainWindow.xaml;InputDialog.xaml;ColorPickerDialog.xaml;SelectionDialog.xaml;CoordinateInputDialog.xaml;AddressResultDialog.xaml;QuickLocateDialog.xaml;LayerStyleDialog.xaml;
 
 False
 

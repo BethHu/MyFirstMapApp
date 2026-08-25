@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 D:\vs2019_project\MyFirstMapApp\MyFirstMapApp\App.xaml
-7167851972
+81043007520
 150-1373684685
-122006057346
+131379477066
 20695546315
-MainWindow.xaml;InputDialog.xaml;ColorPickerDialog.xaml;SelectionDialog.xaml;CoordinateInputDialog.xaml;AddressResultDialog.xaml;QuickLocateDialog.xaml;
+MainWindow.xaml;InputDialog.xaml;ColorPickerDialog.xaml;SelectionDialog.xaml;CoordinateInputDialog.xaml;AddressResultDialog.xaml;QuickLocateDialog.xaml;LayerStyleDialog.xaml;
 
 False
 

@@ -219,6 +219,8 @@ D:\vs2019_project\MyFirstMapApp\MyFirstMapApp\obj\Debug\MyFirstMapApp.csproj.Cor
 D:\vs2019_project\MyFirstMapApp\MyFirstMapApp\obj\Debug\MyFirstMapApp.csproj.CopyComplete
 D:\vs2019_project\MyFirstMapApp\MyFirstMapApp\obj\Debug\MyFirstMapApp.exe
 D:\vs2019_project\MyFirstMapApp\MyFirstMapApp\obj\Debug\MyFirstMapApp.pdb
-D:\vs2019_project\MyFirstMapApp\MyFirstMapApp\obj\Debug\MyFirstMapApp.csproj.AssemblyReference.cache
 D:\vs2019_project\MyFirstMapApp\MyFirstMapApp\bin\Debug\Newtonsoft.Json.dll
 D:\vs2019_project\MyFirstMapApp\MyFirstMapApp\bin\Debug\Newtonsoft.Json.xml
+D:\vs2019_project\MyFirstMapApp\MyFirstMapApp\obj\Debug\MyFirstMapApp.csproj.AssemblyReference.cache
+D:\vs2019_project\MyFirstMapApp\MyFirstMapApp\obj\Debug\LayerStyleDialog.baml
+D:\vs2019_project\MyFirstMapApp\MyFirstMapApp\obj\Debug\LayerStyleDialog.g.cs
