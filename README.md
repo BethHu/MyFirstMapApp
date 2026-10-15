@@ -1,17 +1,33 @@
-# MyFirstMapApp
-
 基于 **ArcGIS Runtime SDK for .NET (100.13)** 与 **WPF** 开发的地图工具应用，实现了二维地图显示、多图层管理、地理要素绘制与测量、地址搜索、路径规划以及三维场景浏览等功能。
 
 ## 功能特性
 
 - **底图切换**：支持街道地图、地形图、影像图、浅色图、深色图、导航图等多种底图。
+<img width="2178" height="1388" alt="image" src="https://github.com/user-attachments/assets/44a9669a-b379-43c6-8632-c0328e4d6355" />
+
 - **图层管理**：加载 Shapefile / GeoJSON 等数据源，支持图层添加、删除、拖拽排序、可见性控制与颜色样式设置。
+<img width="953" height="608" alt="image" src="https://github.com/user-attachments/assets/77ce68d2-8c83-4d87-97b1-943f885b80b5" />
+
 - **要素绘制**：绘制点、线、面，支持通过地图点击或输入坐标两种方式。
 - **距离 / 面积测量**：在地图上实时测量两点距离与多边形面积。
+  <img width="2178" height="1388" alt="image" src="https://github.com/user-attachments/assets/47834547-6f22-4e8a-993f-fc4fc2a4784f" />
+
 - **属性查看**：点击要素查看其属性信息。
+<img width="637" height="406" alt="image" src="https://github.com/user-attachments/assets/e43fbdd4-9367-4b19-a689-89c8d080d997" />
+
 - **地址搜索**：基于地理编码服务实现地址搜索与快速定位。
+<img width="489" height="394" alt="image" src="https://github.com/user-attachments/assets/4ee62f8c-90ff-4ecc-a13b-e46d2726470c" />
+<img width="606" height="386" alt="image" src="https://github.com/user-attachments/assets/bd160d9e-2abc-40da-a7fd-2c3903a47b55" />
+
+
 - **路径规划**：支持驾车 / 步行的起点终点路径计算，显示距离与耗时。
+<img width="850" height="542" alt="image" src="https://github.com/user-attachments/assets/ec42668b-66b1-4e9e-8752-92cfa389862d" />
+
 - **三维场景**：MapView / SceneView 切换，支持 Web Scene、3D 底图、俯视 / 倾斜 / 旋转等视角控制。
+<img width="864" height="551" alt="image" src="https://github.com/user-attachments/assets/5b91e2c3-58f7-4b53-bd4a-4a48c77cbec6" />
+<img width="630" height="402" alt="image" src="https://github.com/user-attachments/assets/6cdfd328-4b34-438e-98a9-71532a022ff3" />
+
+
 - **数据导出**：将绘制的图形导出为 GeoJSON。
 
 ## 技术栈
